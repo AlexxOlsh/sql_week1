@@ -393,7 +393,7 @@ WHERE movie_id=6;
 DELETE FROM reviews WHERE review_id=56
 
 
-
+-- Хранимая процедура для добавления нового фильма вместе с актерами и режиссерами.
 CREATE PROCEDURE add_movie_info(
   p_title VARCHAR(255),
   p_release_date DATE,
@@ -418,12 +418,13 @@ BEGIN
       VALUES
         (add_movie_info.p_people_name, add_movie_info.p_people_role);
     end if;
-  INSERT INTO MoviePeople (movie_id, people_id, movie_role)
-  VALUES
-    ((SELECT movie_id FROM movies WHERE title=add_movie_info.p_title), (SELECT people_id FROM People WHERE people_name=add_movie_info.p_people_name), add_movie_info.p_movie_role);
+    INSERT INTO MoviePeople (movie_id, people_id, movie_role)
+    VALUES
+        ((SELECT movie_id FROM movies WHERE title=add_movie_info.p_title), (SELECT people_id FROM People WHERE people_name=add_movie_info.p_people_name), add_movie_info.p_movie_role);
 END;
 $$ LANGUAGE plpgsql;
 
+-- Вызов процедуры
 CALL add_movie_info('Дюна', '2021-09-03', 'фантастика, боевик, драма, приключения', 7.7, 'Наследник знаменитого дома Атрейдесов Пол отправляется вместе с семьей на одну из самых опасных планет во Вселенной — Арракис. Здесь нет ничего, кроме песка, палящего солнца, гигантских чудовищ и основной причины межгалактических конфликтов — невероятно ценного ресурса, который называется меланж.', 'Тимоти Шаломе', 'Актер', 'Пол Атрейдес');
 CALL add_movie_info('Дюна', '2021-09-03', 'фантастика, боевик, драма, приключения', 7.7, 'Наследник знаменитого дома Атрейдесов Пол отправляется вместе с семьей на одну из самых опасных планет во Вселенной — Арракис. Здесь нет ничего, кроме песка, палящего солнца, гигантских чудовищ и основной причины межгалактических конфликтов — невероятно ценного ресурса, который называется меланж.', 'Зендея', 'Актриса', 'Чани');
 CALL add_movie_info('Маленькие женщины', '2019-12-07', 'драма, мелодрама', 7.8, 'История взросления четырёх непохожих друг на друга сестер. Где-то бушует Гражданская война, но проблемы, с которыми сталкиваются девушки, актуальны как никогда: первая любовь, горькое разочарование, томительная разлука и непростые поиски себя и своего места в жизни.', 'Сирша Ронан', 'Актриса', 'Джо');
